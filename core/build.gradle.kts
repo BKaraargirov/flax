@@ -7,16 +7,23 @@ plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm")
 }
+val classGraphVersion = "4.8.80"
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
 
 dependencies {
-    // Align versions of all Kotlin components
+    // Kotlin libraries
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
-    // Use the Kotlin test library.
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    // 3rd party libraries
+    implementation("io.github.classgraph:classgraph:$classGraphVersion")
 
-    // Use the Kotlin JUnit integration.
+    // Test libraries
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")
 }
