@@ -1,4 +1,4 @@
-package com.github.khousehold.flax.core.filters
+package com.github.khousehold.flax.core.filters.annotations
 
 /**
  * Ignore a field and make it non searchable.

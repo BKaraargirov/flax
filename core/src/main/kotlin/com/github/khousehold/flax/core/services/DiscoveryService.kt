@@ -1,25 +1,25 @@
 package com.github.khousehold.flax.core.services
 
 
-import com.github.khousehold.flax.core.filters.Filterable
-import com.github.khousehold.flax.core.filters.NotFilterable
+import com.github.khousehold.flax.core.filters.annotations.Filterable
+import com.github.khousehold.flax.core.filters.annotations.NotFilterable
 import io.github.classgraph.ClassGraph
-import io.github.classgraph.ClassInfo
-import io.github.classgraph.ScanResult
-import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KVisibility
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.kotlinProperty
 
+/**
+ * Responsible for discovering filters and filterables and extracting the needed meta data from them.
+ */
 class DiscoveryService {
+    /**
+     * Scan a class path to find all classes marked with @Filterable
+     */
     fun findFilterables(pkgName: String): List<KClass<*>> {
         val filterableAnnotation = Filterable::class.qualifiedName
 
+        //TODO: change to own implementation since this is the only place where the dependency is used
         return ClassGraph()
                 .enableAllInfo()
                 .whitelistPackages(pkgName)
@@ -31,6 +31,10 @@ class DiscoveryService {
                 }
     }
 
+    /**
+     * Create a mapping of all fields of a given class that can be used as a filter.
+     * All fields which are market as @NotFilterable or are non public are ignored.
+     */
     fun getFilterableFields(classInfo: KClass<*>): Map<String, KType> {
          return classInfo.java.declaredFields
                 .filter { property ->
