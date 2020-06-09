@@ -3,6 +3,7 @@ package com.github.khousehold.flax.mongo.filters
 import com.github.khousehold.flax.core.errors.ErrorHandlingUtils
 import com.github.khousehold.flax.core.filters.*
 import com.github.khousehold.flax.core.filters.errors.FilterValidationErrorFactory
+import com.github.khousehold.flax.core.filters.models.*
 import com.mongodb.client.model.Filters
 import org.bson.codecs.configuration.CodecRegistry
 import org.bson.conversions.Bson

@@ -1,4 +1,4 @@
-package com.github.khousehold.flax.core.filters
+package com.github.khousehold.flax.core.filters.models
 
 data class Pagination @ExperimentalUnsignedTypes constructor(
   val page: Int,

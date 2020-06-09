@@ -3,8 +3,8 @@ package com.github.khousehold.flax.mongo.infrastructure
 import com.mongodb.client.FindIterable
 import com.mongodb.client.MongoCollection
 import com.github.khousehold.flax.core.filters.FilterFactory
-import com.github.khousehold.flax.core.filters.IFilter
-import com.github.khousehold.flax.core.filters.Pagination
+import com.github.khousehold.flax.core.filters.models.IFilter
+import com.github.khousehold.flax.core.filters.models.Pagination
 import org.bson.conversions.Bson
 import org.litote.kmongo.deleteMany
 import kotlin.reflect.KType

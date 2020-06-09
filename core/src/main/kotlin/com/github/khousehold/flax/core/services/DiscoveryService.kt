@@ -3,6 +3,7 @@ package com.github.khousehold.flax.core.services
 
 import com.github.khousehold.flax.core.filters.annotations.Filterable
 import com.github.khousehold.flax.core.filters.annotations.NotFilterable
+import com.github.khousehold.flax.core.filters.models.ClassRestrictions
 import io.github.classgraph.ClassGraph
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -13,6 +14,7 @@ import kotlin.reflect.jvm.kotlinProperty
  * Responsible for discovering filters and filterables and extracting the needed meta data from them.
  */
 class DiscoveryService {
+
     /**
      * Scan a class path to find all classes marked with @Filterable
      */
@@ -35,8 +37,8 @@ class DiscoveryService {
      * Create a mapping of all fields of a given class that can be used as a filter.
      * All fields which are market as @NotFilterable or are non public are ignored.
      */
-    fun getFilterableFields(classInfo: KClass<*>): Map<String, KType> {
-         return classInfo.java.declaredFields
+    fun getFilterableFields(classInfo: KClass<*>): ClassRestrictions {
+         val filterableProperties =  classInfo.java.declaredFields
                 .filter { property ->
                     val isFilterable = property.annotations
                             .all {
@@ -47,5 +49,7 @@ class DiscoveryService {
                  .filter { p -> p != null && p.visibility == KVisibility.PUBLIC }
                  .map { property -> Pair(property!!.name, property.returnType) }
                  .toMap()
+
+        return ClassRestrictions(classInfo, filterableProperties)
     }
 }

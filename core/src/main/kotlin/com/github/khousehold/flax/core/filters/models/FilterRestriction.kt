@@ -1,5 +1,6 @@
-package com.github.khousehold.flax.core.filters
+package com.github.khousehold.flax.core.filters.models
 
+import com.github.khousehold.flax.core.filters.models.FilterOperation
 import kotlin.reflect.KProperty1
 
 /**

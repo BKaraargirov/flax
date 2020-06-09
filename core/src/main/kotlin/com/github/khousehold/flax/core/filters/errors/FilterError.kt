@@ -1,7 +1,7 @@
 package com.github.khousehold.flax.core.filters.errors
 
 import com.github.khousehold.flax.core.errors.ErrorBase
-import com.github.khousehold.flax.core.filters.FilterOperation
+import com.github.khousehold.flax.core.filters.models.FilterOperation
 import kotlin.reflect.KType
 
 sealed class FilterError(

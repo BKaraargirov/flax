@@ -1,4 +1,4 @@
-package com.github.khousehold.flax.core.filters
+package com.github.khousehold.flax.core.filters.models
 
 data class Filter(
   val propertyName: String,

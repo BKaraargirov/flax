@@ -2,13 +2,19 @@ package com.github.khousehold.flax.core.filters
 
 import com.github.khousehold.flax.core.filters.errors.FilterError
 import com.github.khousehold.flax.core.filters.errors.FilterError.*
+import com.github.khousehold.flax.core.filters.models.*
 import oink.server.common.reflection.TypeUtils
 import java.util.*
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KType
 
-class FilterValidator(val typeRestrictions: List<FilterRestriction>) {
-  fun validate(filters: IFilter, target: KType): List<Optional<FilterError>> {
+typealias ClassName = String
+
+/**
+ * Checks if an filter can be applied to a property.
+ */
+class FilterValidator(val classRestrictions: Map<ClassName, ClassRestrictions>, val typeRestrictions: List<FilterRestriction>) {
+  fun validate(targetClassName: ClassName, filters: IFilter, target: KType): List<Optional<FilterError>> {
     val propertyCache = TypeUtils.createPropertyCache(target)
 
     fun loop(filter: IFilter): List<Optional<FilterError>> {
