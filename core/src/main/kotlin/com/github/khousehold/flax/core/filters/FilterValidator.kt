@@ -15,8 +15,6 @@ typealias ClassName = String
  */
 class FilterValidator(val classRestrictions: Map<ClassName, ClassRestrictions>, val typeRestrictions: List<FilterRestriction>) {
   fun validate(targetClassName: ClassName, filters: IFilter, target: KType): List<Optional<FilterError>> {
-    val propertyCache = TypeUtils.createPropertyCache(target)
-
     fun loop(filter: IFilter): List<Optional<FilterError>> {
       return when (filter) {
         is LogicalFilter -> {
