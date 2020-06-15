@@ -8,6 +8,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
 }
 val classGraphVersion = "4.8.80"
+val spekVersion = "2.0.11"
 
 tasks.withType<Test> {
     useJUnitPlatform()
@@ -23,6 +24,8 @@ dependencies {
     implementation("io.github.classgraph:classgraph:$classGraphVersion")
 
     // Test libraries
+    testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
+    testRuntimeOnly ("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")

@@ -14,42 +14,51 @@ import kotlin.reflect.jvm.kotlinProperty
  * Responsible for discovering filters and filterables and extracting the needed meta data from them.
  */
 class DiscoveryService {
+  //TODO: Test
+  fun discover(pkgName: String): Map<String, ClassRestrictions> {
+    val filterableClasses = findFilterables(pkgName)
 
-    /**
-     * Scan a class path to find all classes marked with @Filterable
-     */
-    fun findFilterables(pkgName: String): List<KClass<*>> {
-        val filterableAnnotation = Filterable::class.qualifiedName
+    return filterableClasses
+        .map { getFilterableFields(it) }
+        .map { classRestrictions ->  Pair(classRestrictions.className, classRestrictions) }
+        .toMap()
+  }
 
-        //TODO: change to own implementation since this is the only place where the dependency is used
-        return ClassGraph()
-                .enableAllInfo()
-                .whitelistPackages(pkgName)
-                .scan()
-                .use{ scanResult ->
-                    scanResult
-                            .getClassesWithAnnotation(filterableAnnotation)
-                            .loadClasses().map { it.kotlin }
-                }
-    }
+  /**
+   * Scan a class path to find all classes marked with @Filterable
+   */
+  fun findFilterables(pkgName: String): List<KClass<*>> {
+    val filterableAnnotation = Filterable::class.qualifiedName
 
-    /**
-     * Create a mapping of all fields of a given class that can be used as a filter.
-     * All fields which are market as @NotFilterable or are non public are ignored.
-     */
-    fun getFilterableFields(classInfo: KClass<*>): ClassRestrictions {
-         val filterableProperties =  classInfo.java.declaredFields
-                .filter { property ->
-                    val isFilterable = property.annotations
-                            .all {
-                                p -> p.annotationClass != NotFilterable::class
-                            }
-                    isFilterable
-                }.map { it.kotlinProperty }
-                 .filter { p -> p != null && p.visibility == KVisibility.PUBLIC }
-                 .map { property -> Pair(property!!.name, property.returnType) }
-                 .toMap()
+    //TODO: change to own implementation since this is the only place where the dependency is used
+    return ClassGraph()
+        .enableAllInfo()
+        .whitelistPackages(pkgName)
+        .scan()
+        .use { scanResult ->
+          scanResult
+              .getClassesWithAnnotation(filterableAnnotation)
+              .loadClasses().map { it.kotlin }
+        }
+  }
 
-        return ClassRestrictions(classInfo, filterableProperties)
-    }
+  /**
+   * Create a mapping of all fields of a given class that can be used as a filter.
+   * All fields which are market as @NotFilterable or are non public are ignored.
+   */
+  fun getFilterableFields(classInfo: KClass<*>): ClassRestrictions {
+    val filterableProperties = classInfo.java.declaredFields
+        .filter { property ->
+          val isFilterable = property.annotations
+              .all { p ->
+                p.annotationClass != NotFilterable::class
+              }
+          isFilterable
+        }.map { it.kotlinProperty }
+        .filter { p -> p != null && p.visibility == KVisibility.PUBLIC }
+        .map { property -> Pair(property!!.name, property.returnType) }
+        .toMap()
+
+    return ClassRestrictions(classInfo, filterableProperties)
+  }
 }
