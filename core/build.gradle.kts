@@ -6,9 +6,11 @@
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm")
+    kotlin("kapt")
 }
 val classGraphVersion = "4.8.80"
 val spekVersion = "2.0.11"
+val arrowCoreVersion = "0.10.5"
 
 tasks.withType<Test> {
     useJUnitPlatform()
@@ -19,6 +21,12 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    //Arrow
+    implementation("io.arrow-kt:arrow-core:$arrowCoreVersion")
+    implementation("io.arrow-kt:arrow-syntax:$arrowCoreVersion")
+    implementation("io.arrow-kt:arrow-core-data:$arrowCoreVersion")
+    kapt("io.arrow-kt:arrow-meta:$arrowCoreVersion")
 
     // 3rd party libraries
     implementation("io.github.classgraph:classgraph:$classGraphVersion")
