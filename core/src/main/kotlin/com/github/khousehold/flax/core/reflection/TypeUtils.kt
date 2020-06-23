@@ -17,10 +17,14 @@ object TypeUtils {
   fun createPropertyCache(targetType: KType): Map<String, KProperty1<*,*>> =
     this.createPropertyCache(targetType.jvmErasure)
 
-  fun isNumber(propertyType: KProperty1<*, *>): Boolean {
-    return isTypeOf(propertyType, Integer::class) || isTypeOf(propertyType, Double::class) || isTypeOf(propertyType,
-      Float::class) || isTypeOf(propertyType, Long::class) || isTypeOf(propertyType, BigDecimal::class) || isTypeOf(
-      propertyType, Short::class) || isTypeOf(propertyType, BigInteger::class)
+  fun isNumber(propertyType: KType): Boolean {
+    return propertyType.classifier == Integer::class ||
+        propertyType.classifier == Double::class ||
+        propertyType.classifier == Float::class ||
+        propertyType.classifier == Long::class ||
+        propertyType.classifier== BigDecimal::class ||
+        propertyType.classifier == Short::class ||
+        propertyType.classifier == BigInteger::class
   }
 
   fun isTypeOf(propertyType: KProperty1<*, *>, targetType: KType): Boolean {

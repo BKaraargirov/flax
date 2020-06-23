@@ -9,10 +9,10 @@ import java.time.LocalDateTime
 
 object DefaultFilterRestrictions {
   val RESTRICTIONS = listOf(
-          FilterRestriction({ k -> isTypeOf(k, String::class) }, listOf(Equal, Contains)),
-          FilterRestriction({ k -> isTypeOf(k, TypeUtils.getNullableType(String::class)) }, listOf(Equal)),
+          FilterRestriction({ k -> k.classifier  == String::class }, listOf(Equal, Contains)),
+          FilterRestriction({ k -> k.classifier == TypeUtils.getNullableType(String::class) }, listOf(Equal)),
           FilterRestriction({ k -> isNumber(k) }, listOf(Equal, GreaterThan, GreaterThanEq, LowerThan, LowerThanEq)),
-          FilterRestriction({ k -> isTypeOf(k, LocalDateTime::class) }, listOf(GreaterThan, GreaterThanEq, LowerThan, LowerThanEq))
+          FilterRestriction({ k -> k.classifier == LocalDateTime::class }, listOf(GreaterThan, GreaterThanEq, LowerThan, LowerThanEq))
   // TODO: add year eq, year + month, year + month + day eq,
   )
 }

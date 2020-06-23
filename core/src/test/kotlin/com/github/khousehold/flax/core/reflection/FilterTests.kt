@@ -38,49 +38,49 @@ class FilterTests : StringSpec({
   }
 
   "Int property should be a numeric" {
-    val intProperty = TestClass::class.memberProperties.first { it.name == "size" }
+    val intProperty = TestClass::class.memberProperties.first { it.name == "size" }.returnType
 
     TypeUtils.isNumber(intProperty) shouldBe true
   }
 
   "BigDecimal property should be a numeric" {
-    val target = TestClass::class.memberProperties.first { it.name == "money" }
+    val target = TestClass::class.memberProperties.first { it.name == "money" }.returnType
 
     TypeUtils.isNumber(target) shouldBe true
   }
 
   "Long property should be a numeric" {
-    val target = TestClass::class.memberProperties.first { it.name == "bigOne" }
+    val target = TestClass::class.memberProperties.first { it.name == "bigOne" }.returnType
 
     TypeUtils.isNumber(target) shouldBe true
   }
 
   "Short property should be a numeric" {
-    val target = TestClass::class.memberProperties.first { it.name == "digit" }
+    val target = TestClass::class.memberProperties.first { it.name == "digit" }.returnType
 
     TypeUtils.isNumber(target) shouldBe true
   }
 
   "Double property should be a numeric" {
-    val target = TestClass::class.memberProperties.first { it.name == "precision" }
+    val target = TestClass::class.memberProperties.first { it.name == "precision" }.returnType
 
     TypeUtils.isNumber(target) shouldBe true
   }
 
   "Float property should be a numeric" {
-    val target = TestClass::class.memberProperties.first { it.name == "p2" }
+    val target = TestClass::class.memberProperties.first { it.name == "p2" }.returnType
 
     TypeUtils.isNumber(target) shouldBe true
   }
 
   "BigInt property should be a numeric" {
-    val target = TestClass::class.memberProperties.first { it.name == "giga" }
+    val target = TestClass::class.memberProperties.first { it.name == "giga" }.returnType
 
     TypeUtils.isNumber(target) shouldBe true
   }
 
   "String property should not be a numeric" {
-    val target = TestClass::class.memberProperties.first { it.name == "type" }
+    val target = TestClass::class.memberProperties.first { it.name == "type" }.returnType
 
     TypeUtils.isNumber(target) shouldBe false
   }
