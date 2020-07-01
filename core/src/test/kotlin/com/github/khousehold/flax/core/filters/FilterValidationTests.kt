@@ -14,6 +14,8 @@ import io.kotlintest.matchers.collections.shouldContain
 import io.kotlintest.shouldBe
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
+import kotlin.reflect.full.createType
+import kotlin.reflect.typeOf
 
 object FilterValidationTests: Spek({
   val packageUnderTest = "com.github.khousehold.flax.core"
@@ -71,5 +73,31 @@ object FilterValidationTests: Spek({
       validationResult shouldContain Some(FilterError.FilterNameIsNotCorrectError("ag3"))
       validationResult shouldContain Some(FilterError.FilterNameIsNotCorrectError("@ge"))
     }
+
+    describe("of unsupported operation for the given type") {
+      val validFiltrationTree = LogicalFilter(
+          LogicalFilterType.AND,
+          listOf(
+              LogicalFilter(
+                  LogicalFilterType.OR,
+                  listOf(
+                      Filter("name", "Corey", FilterOperation.Equal),
+                      Filter("name", "This isn't valid anyway", FilterOperation.LowerThan)
+                  )
+              )
+          )
+      )
+
+      val validationResult = unitUnderTest.validate(
+          NotCompletelyFilterableClass::class.qualifiedName!!,
+          validFiltrationTree
+      )
+
+      validationResult.size shouldBe 1
+      validationResult shouldContain Some(FilterError.FilterOperationNotSupportedError(
+          String::class.createType(), FilterOperation.LowerThan)
+      )
+    }
+
   }
 })

@@ -26,4 +26,7 @@ sealed class FilterError(
       return javaClass.hashCode()
     }
   }
+
+  data class ClassNotFilterable(val className: String) :
+      FilterError("FTR_05_NOF", message = "Class $className not filterable")
 }
