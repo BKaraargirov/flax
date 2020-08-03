@@ -11,24 +11,24 @@ import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.jvm.jvmErasure
 
 object TypeUtils {
-  fun createPropertyCache(targetClass: KClass<*>): Map<String, KProperty1<*, *>> =
-    targetClass.declaredMemberProperties.map { p -> Pair(p.name, p) }.toMap()
+  fun createPropertyCache(targetClass: KClass<*>): Map<String, KType> =
+    targetClass.declaredMemberProperties.map { p -> Pair(p.name, p.returnType) }.toMap()
 
-  fun createPropertyCache(targetType: KType): Map<String, KProperty1<*,*>> =
-    this.createPropertyCache(targetType.jvmErasure)
+  fun getPropertyTypes(targetClassType: KType): Map<String, KType> =
+    this.createPropertyCache(targetClassType.jvmErasure)
 
-  fun isNumber(propertyType: KProperty1<*, *>): Boolean {
+  fun isNumber(propertyType: KType): Boolean {
     return isTypeOf(propertyType, Integer::class) || isTypeOf(propertyType, Double::class) || isTypeOf(propertyType,
       Float::class) || isTypeOf(propertyType, Long::class) || isTypeOf(propertyType, BigDecimal::class) || isTypeOf(
       propertyType, Short::class) || isTypeOf(propertyType, BigInteger::class)
   }
 
-  fun isTypeOf(propertyType: KProperty1<*, *>, targetType: KType): Boolean {
-    return propertyType.returnType.isSubtypeOf(targetType)
+  fun isTypeOf(propertyType: KType, targetType: KType): Boolean {
+    return propertyType.isSubtypeOf(targetType)
   }
 
-  fun isTypeOf(propertyType: KProperty1<*, *>, targetType: KClass<*>): Boolean {
-    return propertyType.returnType.isSubtypeOf(targetType.createType())
+  fun isTypeOf(propertyType: KType, targetType: KClass<*>): Boolean {
+    return propertyType.isSubtypeOf(targetType.createType())
   }
 
   fun getNullableType(targetClass: KClass<*>): KType = targetClass.createType(nullable = true)

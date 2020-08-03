@@ -4,6 +4,7 @@ import com.github.khousehold.flax.core.services.testData.NotCompletelyFilterable
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import kotlin.reflect.full.createType
+import kotlin.reflect.full.isSubclassOf
 
 class DiscoveryServiceTests: StringSpec({
     val unitUnderTest = DiscoveryService()
@@ -25,11 +26,12 @@ class DiscoveryServiceTests: StringSpec({
         val cls = unitUnderTest.findFilterables(targetPackage).filter { it.simpleName == targetClass }.first()
         val result = unitUnderTest.getFilterableFields(cls)
 
-        result.size shouldBe expectedResultSize
-        result.containsKey("age") shouldBe true
-        result.get("age") shouldBe Int::class.createType()
-        result.containsKey("name") shouldBe true
-        result.get("name") shouldBe String::class.createType()
+        result.classInfo.isSubclassOf(NotCompletelyFilterableClass::class) shouldBe true
+        result.filterableProperties.size shouldBe expectedResultSize
+        result.filterableProperties.containsKey("age") shouldBe true
+        result.filterableProperties.get("age") shouldBe Int::class.createType()
+        result.filterableProperties.containsKey("name") shouldBe true
+        result.filterableProperties.get("name") shouldBe String::class.createType()
     }
 
 })

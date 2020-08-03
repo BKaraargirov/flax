@@ -13,39 +13,52 @@ typealias ClassName = String
 /**
  * Checks if an filter can be applied to a property.
  */
-class FilterValidator(val classRestrictions: Map<ClassName, ClassRestrictions>, val typeRestrictions: List<FilterRestriction>) {
-  fun validate(targetClassName: ClassName, filters: IFilter, target: KType): List<Optional<FilterError>> {
-    fun loop(filter: IFilter): List<Optional<FilterError>> {
+class FilterValidator(val classRestrictions: Map<ClassName, ClassRestrictions>,
+                      val typeRestrictions: List<FilterRestriction>) {
+  fun validate(targetClassName: ClassName,
+               filters: IFilter): List<Optional<FilterError>> {
+    fun loop(filter: IFilter, classRestriction: ClassRestrictions): List<Optional<FilterError>> {
       return when (filter) {
         is LogicalFilter -> {
           val validation = validateFilterCombination(filter)
-          val childValidations = filter.filters.flatMap { loop(it) }
+          val childValidations = filter.filters.flatMap { loop(it, classRestriction) }
 
           // Merge and check if errors are present
           (listOf(validation) + childValidations).filter { it.isPresent }
         }
         is Filter -> {
-          listOf(validateFilter(filter, propertyCache))
+          listOf(validateFilter(filter, classRestriction))
         }
         else -> throw UnknownError()
       }
     }
 
-    return loop(filters)
+    return if(!classRestrictions.containsKey(targetClassName)) {
+      listOf(Optional.of(FilterClassNotFound(targetClassName) as FilterError))
+    } else {
+      loop(filters, classRestrictions.getValue(targetClassName))
+    }
   }
 
+  /**
+   * Check if the logical operations of the filtration tree is ok.
+   * Currently NOT is not supported
+   */
   private fun validateFilterCombination(logicalFilter: LogicalFilter): Optional<FilterError> =
     if (logicalFilter.type == LogicalFilterType.NOT) isNotValid(logicalFilter)
     else Optional.empty()
 
 
-  private fun validateFilter(filter: Filter, propertyCache: Map<String, KProperty1<*, *>>): Optional<FilterError> {
-    val isNameCorrect = isFilterNameCorrect(filter, propertyCache)
+  private fun validateFilter(filter: Filter, classRestriction: ClassRestrictions): Optional<FilterError> {
+    val isNameCorrect = isFilterNameCorrect(filter, classRestriction.filterableProperties)
     return if (isNameCorrect.isPresent) isNameCorrect
-    else canOperationBeApplied(propertyCache.getValue(filter.propertyName), filter.operation)
+    else canOperationBeApplied(classRestriction.filterableProperties.getValue(filter.propertyName), filter.operation)
   }
 
-  private fun isFilterNameCorrect(filter: Filter, propertyCache: Map<String, KProperty1<*, *>>): Optional<FilterError> =
+  /**
+   * Check if the property on which the filter is to be applied exists
+   */
+  private fun isFilterNameCorrect(filter: Filter, propertyCache: Map<String, KType>): Optional<FilterError> =
     if (propertyCache.containsKey(filter.propertyName)) {
       Optional.empty()
     } else {
@@ -56,18 +69,18 @@ class FilterValidator(val classRestrictions: Map<ClassName, ClassRestrictions>, 
    * Check if a given operation can be applied to a given type
    * @return Empty optional if everythin is ok, A error with information with what isn't if it is not
    */
-  private fun canOperationBeApplied(property: KProperty1<*, *>, operation: FilterOperation): Optional<FilterError> {
+  private fun canOperationBeApplied(property: KType, operation: FilterOperation): Optional<FilterError> {
     val applicableType = this.typeRestrictions.filter { it.predicate.invoke(property) }
 
     if (applicableType.isEmpty()) {
-      return Optional.of(FilterUnsupportedTypeError(property.returnType))
+      return Optional.of(FilterUnsupportedTypeError(property))
     }
 
     val supportedOperations = applicableType.first()
       .applicableFilters
 
     if (supportedOperations.contains(operation) == false) {
-      return Optional.of(FilterOperationNotSupportedError(property.returnType, operation))
+      return Optional.of(FilterOperationNotSupportedError(property, operation))
     }
 
     return Optional.empty()

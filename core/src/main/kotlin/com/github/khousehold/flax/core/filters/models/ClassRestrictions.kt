@@ -5,6 +5,9 @@ import kotlin.reflect.KType
 
 /**
  * Contains all filter restrictions for a given class
+ * @param classInfo is just raw reflection metadata of the class.
+ * @param filterableProperties contains all of the properties of the class that can be filtered with.
+ *                             The value of the map is the type of the property.
  */
 data class ClassRestrictions(
         val classInfo: KClass<*>,
