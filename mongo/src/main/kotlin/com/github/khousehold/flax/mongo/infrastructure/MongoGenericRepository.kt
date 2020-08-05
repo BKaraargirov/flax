@@ -7,10 +7,12 @@ import com.github.khousehold.flax.core.filters.models.IFilter
 import com.github.khousehold.flax.core.filters.models.Pagination
 import org.bson.conversions.Bson
 import org.litote.kmongo.deleteMany
+import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
 abstract class MongoGenericRepository<A>(
-  private val reflected: KType, private val filterFactory: FilterFactory<Bson>
+    private val reflected: KClass<*>,
+    private val filterFactory: FilterFactory<Bson>
 ) {
 
   abstract fun getCollection(): MongoCollection<A>

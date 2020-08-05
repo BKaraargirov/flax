@@ -3,9 +3,7 @@ package com.github.khousehold.flax.core.filters
 import com.github.khousehold.flax.core.filters.errors.FilterError
 import com.github.khousehold.flax.core.filters.errors.FilterError.*
 import com.github.khousehold.flax.core.filters.models.*
-import oink.server.common.reflection.TypeUtils
 import java.util.*
-import kotlin.reflect.KProperty1
 import kotlin.reflect.KType
 
 typealias ClassName = String
@@ -14,7 +12,7 @@ typealias ClassName = String
  * Checks if an filter can be applied to a property.
  */
 class FilterValidator(val classRestrictions: Map<ClassName, ClassRestrictions>,
-                      val typeRestrictions: List<FilterRestriction>) {
+                      val filterRestrictions: List<FilterRestriction>) {
   fun validate(targetClassName: ClassName,
                filters: IFilter): List<Optional<FilterError>> {
     fun loop(filter: IFilter, classRestriction: ClassRestrictions): List<Optional<FilterError>> {
@@ -70,7 +68,7 @@ class FilterValidator(val classRestrictions: Map<ClassName, ClassRestrictions>,
    * @return Empty optional if everythin is ok, A error with information with what isn't if it is not
    */
   private fun canOperationBeApplied(property: KType, operation: FilterOperation): Optional<FilterError> {
-    val applicableType = this.typeRestrictions.filter { it.predicate.invoke(property) }
+    val applicableType = this.filterRestrictions.filter { it.predicate.invoke(property) }
 
     if (applicableType.isEmpty()) {
       return Optional.of(FilterUnsupportedTypeError(property))

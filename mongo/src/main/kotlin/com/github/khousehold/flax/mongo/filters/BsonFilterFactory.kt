@@ -7,17 +7,17 @@ import com.github.khousehold.flax.core.filters.models.*
 import com.mongodb.client.model.Filters
 import org.bson.codecs.configuration.CodecRegistry
 import org.bson.conversions.Bson
+import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.jvmErasure
 
 class BsonFilterFactory(
-  private val codecRegistry: CodecRegistry,
   private val filterValidator: FilterValidator
 ) : FilterFactory<Bson> {
   override fun transformFilters(
-          filters: IFilter, targetClass: KType
+          filters: IFilter, targetClass: KClass<*>
   ): Bson {
-    val validations = filterValidator.validate(targetClass.jvmErasure.qualifiedName!!.toLowerCase(), filters)
+    val validations = filterValidator.validate(targetClass.qualifiedName!!.toLowerCase(), filters)
 
     ErrorHandlingUtils.throwIfInvalid(validations, FilterValidationErrorFactory())
 
