@@ -11,3 +11,4 @@ rootProject.name = "flax"
 
 include("core")
 include("mongo")
+include("spring")

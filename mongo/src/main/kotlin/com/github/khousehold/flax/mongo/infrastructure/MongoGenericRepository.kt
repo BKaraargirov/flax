@@ -1,5 +1,6 @@
 package com.github.khousehold.flax.mongo.infrastructure
 
+import com.github.khousehold.flax.core.dataaccess.Repository
 import com.mongodb.client.FindIterable
 import com.mongodb.client.MongoCollection
 import com.github.khousehold.flax.core.filters.FilterFactory
@@ -9,13 +10,17 @@ import org.bson.conversions.Bson
 import org.litote.kmongo.deleteMany
 import kotlin.reflect.KType
 
+/**
+ * @param reflected metadata of the generic type A
+ * @param filterFactory just the BSON implementation of filter factory
+ */
 abstract class MongoGenericRepository<A>(
   private val reflected: KType, private val filterFactory: FilterFactory<Bson>
-) {
+) : Repository<A> {
 
   abstract fun getCollection(): MongoCollection<A>
 
-  fun get(filters: IFilter?, pagination: Pagination?): List<A> {
+  override fun get(filters: IFilter?, pagination: Pagination?): List<A> {
     val search = if (filters == null) {
       getCollection().find()
     } else {
@@ -25,7 +30,7 @@ abstract class MongoGenericRepository<A>(
     return addPagination(search, pagination)
   }
 
-  fun create(newItem: A): Boolean {
+  override fun create(newItem: A): Boolean {
     return try {
       getCollection().insertOne(newItem)
       true
